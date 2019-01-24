@@ -139,8 +139,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(
-                          top: 100,
-                          bottom: 50),
+                          top: 80,
+                          bottom: 40),
                       child: _buildLogo(),
                     ),
                     Padding(
@@ -150,7 +150,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(bottom: 100),
+                      EdgeInsets.only(bottom: 70),
                       child: _buildPassField(),
                     ),
                     Padding(
@@ -210,11 +210,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         },
                       ),
                     ),
-//                    Padding(
-//                      key: _loginKey,
-//                      padding: const EdgeInsets.only(top: 340),
-//                      child: Text("!23"),
-//                    )
                   ],
                 ),
               ),
@@ -237,8 +232,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           onTap: () {
             final y = _loginKey.currentContext.findRenderObject().getTransformTo(null).getTranslation().y;
             // 55为发布按钮的中心位置
-            // 获取的高度为屏幕分辨率高度的一半  不知道为什么
-            initAnimation(window.physicalSize.height / 2 - y - 55 - 50);
+            initAnimation(MediaQuery.of(context).size.height - y - 55 - 50);
             loginControll.forward();
           },
           borderRadius:

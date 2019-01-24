@@ -55,24 +55,32 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildAppBar() {
-    return Platform.isIOS
-        ? CupertinoNavigationBar(
-            middle: Text(
-              "东经科技",
-              style: TextStyle(color: Colors.white),
-            ),
-            leading: _bulidScannerBar(),
-            trailing: _buildMessageBar(),
-            backgroundColor: Theme.of(context).primaryColor,
-          )
-        : AppBar(
-            title: Text("东经科技"),
-            leading: Icon(Icons.apps),
-            actions: <Widget>[
-              _bulidScannerBar(),
-              _buildMessageBar(),
-            ],
-          );
+    return AppBar(
+      title: Text("东经科技"),
+      leading: Icon(Icons.apps),
+      actions: <Widget>[
+        _bulidScannerBar(),
+        _buildMessageBar(),
+      ],
+    );
+//    return Platform.isIOS
+//        ? CupertinoNavigationBar(
+//            middle: Text(
+//              "东经科技",
+//              style: TextStyle(color: Colors.white),
+//            ),
+//            leading: _bulidScannerBar(),
+//            trailing: _buildMessageBar(),
+//            backgroundColor: Theme.of(context).primaryColor,
+//          )
+//        : AppBar(
+//            title: Text("东经科技"),
+//            leading: Icon(Icons.apps),
+//            actions: <Widget>[
+//              _bulidScannerBar(),
+//              _buildMessageBar(),
+//            ],
+//          );
   }
 
   IconButton _bulidScannerBar() {
