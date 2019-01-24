@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:math';
 import 'company.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,30 +26,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-//        exit(0);
-        return true;
-      },
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          Scaffold(
-            appBar: _buildAppBar(),
-            bottomNavigationBar: _buildBottomNavigationBar(),
-            body: Company(),
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: <Widget>[
+        Scaffold(
+          appBar: _buildAppBar(),
+          bottomNavigationBar: _buildBottomNavigationBar(),
+          body: Company(),
+        ),
+        Positioned(
+          bottom: 30.0 + max(0.0, MediaQuery.of(context).padding.bottom - 10.0),
+          width: 50,
+          height: 50,
+          child: Material(
+            color: Colors.transparent,
+            child: _buildExpansionButton(),
           ),
-          Positioned(
-            bottom: 30,
-            width: 50,
-            height: 50,
-            child: Material(
-              color: Colors.transparent,
-              child: _buildExpansionButton(),
-            ),
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 

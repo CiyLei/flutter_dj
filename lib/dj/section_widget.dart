@@ -5,7 +5,7 @@ import 'dart:ui' as ui show ImageFilter, Gradient, Image;
 
 class SectionWidget extends StatefulWidget {
 
-  SectionWidget({@required this.backgroupImage, this.progress = 1.0, this.color})
+  SectionWidget({@required this.backgroupImage, this.progress = 1.0, this.color, this.bottomOffsetY})
       : assert(() {
     if (progress < 1.0 && color == null)
       return false;
@@ -13,6 +13,7 @@ class SectionWidget extends StatefulWidget {
   }());
 
   double progress;
+  double bottomOffsetY;
   Color color;
   ui.Image backgroupImage;
 
@@ -29,6 +30,7 @@ class _SectionWidgetState extends State<SectionWidget> {
         backgroupImage: widget.backgroupImage,
         progress: widget.progress,
         color: widget.color,
+        bottomOffsetY: widget.bottomOffsetY
       ),
     );
   }
@@ -36,11 +38,12 @@ class _SectionWidgetState extends State<SectionWidget> {
 
 class SectionPainter extends CustomPainter {
 
-  SectionPainter({this.backgroupImage, this.progress, this.color});
+  SectionPainter({this.backgroupImage, this.progress, this.color, this.bottomOffsetY});
 
   double progress;
   Color color;
   ui.Image backgroupImage;
+  double bottomOffsetY;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -54,8 +57,7 @@ class SectionPainter extends CustomPainter {
     paint.blendMode = BlendMode.dstOut;
     paint.color = Colors.amberAccent;
     double c_size = progress * sqrt(size.width * size.width + size.height * size.height);
-    // 55为发布按钮的中心位置
-    canvas.drawCircle(Offset(size.width / 2, size.height - 55), c_size, paint);
+    canvas.drawCircle(Offset(size.width / 2, size.height - bottomOffsetY), c_size, paint);
     canvas.restore();
   }
 

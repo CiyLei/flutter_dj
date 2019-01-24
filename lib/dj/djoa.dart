@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -70,6 +71,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   backgroupImage: frame.image,
                   progress: animation1.value,
                   color: Theme.of(context).primaryColor,
+                  // 55为发布按钮的中心位置
+                  bottomOffsetY: (55.0 + max(0.0, MediaQuery.of(context).padding.bottom - 10.0)),
                 )
               ],
             ),
@@ -231,8 +234,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         child: InkWell(
           onTap: () {
             final y = _loginKey.currentContext.findRenderObject().getTransformTo(null).getTranslation().y;
-            // 55为发布按钮的中心位置
-            initAnimation(MediaQuery.of(context).size.height - y - 55 - 50);
+            // 屏幕高度 - 登陆按钮的屏幕位置 - 登陆按钮的高度 - 扩展按钮的底部padding
+            initAnimation(MediaQuery.of(context).size.height - y - 50 - 55 - max(0.0, MediaQuery.of(context).padding.bottom - 10.0));
             loginControll.forward();
           },
           borderRadius:
