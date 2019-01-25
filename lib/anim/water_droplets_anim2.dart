@@ -18,7 +18,7 @@ class _WaterDropletsDemoState extends State<WaterDropletsDemo>
   void initState() {
     super.initState();
     _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+        AnimationController(vsync: this, duration: const Duration(seconds: 5));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     showAuxiliaryPaint = true;
   }
@@ -116,7 +116,7 @@ class WaterDroplets extends CustomPainter {
     double c = min(1.0, distance / separationValue) * smallRadius;
     Point p1 = Point(size.width / 2 - smallRadius + c, bigRadius * 2);
     Point p2 =
-        Point(size.width / 2, bigRadius * 2 + bottomOffset / 2 - smallRadius);
+        Point(size.width / 2, bigRadius * 2 + bottomOffset / 2 - smallRadius + strokeWidth);
     Point p3 = Point(size.width / 2 - smallRadius,
         bigRadius * 2 + bottomOffset - smallRadius);
     Point p4 = Point(size.width / 2 + smallRadius,
@@ -125,7 +125,7 @@ class WaterDroplets extends CustomPainter {
 
     if (bottomOffset > 0) {
       // 水滴
-      if (bottomOffset > smallRadius * 2) {
+      if (bottomOffset > smallRadius) {
         if (c < smallRadius) {
           _paint
             ..color = color
