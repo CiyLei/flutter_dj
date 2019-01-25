@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'company.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app_demo/anim/water_droplets_anim2.dart';
 
 class Home extends StatefulWidget {
   Home({this.radiusWidth});
@@ -101,14 +102,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[300],
-              )
-            ]
-          ),
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300],
+                )
+              ]),
           child: IconButton(
             iconSize: 50,
             padding: EdgeInsets.zero,
@@ -117,12 +117,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               color: Theme.of(context).primaryColor,
             ),
             onPressed: () {
-              if (expansionButtonController.status == AnimationStatus.completed){
+              if (expansionButtonController.status ==
+                  AnimationStatus.completed) {
                 expansionButtonController.reverse();
                 Navigator.of(context).pop();
+              } else if (expansionButtonController.status ==
+                  AnimationStatus.dismissed) {
+                expansionButtonController.forward();
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (c) => WaterDropletsDemo()));
               }
-              else if (expansionButtonController.status ==
-                  AnimationStatus.dismissed) expansionButtonController.forward();
             },
           ),
         ),
