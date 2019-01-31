@@ -36,21 +36,20 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   GlobalKey _loginKey = GlobalKey();
-  GlobalKey _backKey = new GlobalKey();
-  AnimationController loginControll;
-  Animation<double> widthAnimation;
-  Animation<double> transparentAnimation;
-  Animation<double> pointAnimation;
+  GlobalKey _backKey = GlobalKey();
+  AnimationController _loginControll;
+  Animation<double> _widthAnimation;
+  Animation<double> _transparentAnimation;
+  Animation<double> _pointAnimation;
 
-//  Animation<double> pointZoomAnimation;
   Home _home;
-  double pointOffY;
+  double _pointOffY;
 
   @override
   void initState() {
     super.initState();
     _home = Home();
-    loginControll =
+    _loginControll =
         AnimationController(vsync: this, duration: Duration(seconds: 4))
           ..addStatusListener((AnimationStatus statu) {
             if (statu == AnimationStatus.completed) {
@@ -94,7 +93,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           );
         }));
     await Future.delayed(const Duration(seconds: 1));
-    loginControll.reset();
+    _loginControll.reset();
   }
 
   // 截图boundary，并且返回图片的二进制数据。
@@ -107,24 +106,16 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     return pngBytes;
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-//    initAnimation();
-  }
-
   void initAnimation(double pointOffY) {
-    this.pointOffY = pointOffY;
-    widthAnimation = Tween(begin: window.physicalSize.width, end: (50.0))
+    this._pointOffY = pointOffY;
+    _widthAnimation = Tween(begin: window.physicalSize.width, end: (50.0))
         .animate(CurvedAnimation(
-            parent: loginControll,
+            parent: _loginControll,
             curve: Interval(0, 0.3, curve: SpringCurve(tension: 0.7))));
-    transparentAnimation = Tween(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(parent: loginControll, curve: Interval(0.1, 0.2)));
-    pointAnimation = Tween(begin: 0.0, end: pointOffY).animate(CurvedAnimation(
-        parent: loginControll, curve: Interval(0.30, 1.0, curve: Curves.ease)));
-//    pointZoomAnimation = Tween(begin: (10.0), end: (75.0)).animate(
-//        CurvedAnimation(parent: loginControll, curve: Interval(0.95, 1)));
+    _transparentAnimation = Tween(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(parent: _loginControll, curve: Interval(0.1, 0.2)));
+    _pointAnimation = Tween(begin: 0.0, end: pointOffY).animate(CurvedAnimation(
+        parent: _loginControll, curve: Interval(0.30, 1.0, curve: Curves.ease)));
   }
 
   @override
@@ -160,7 +151,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   Padding(
                     padding: EdgeInsets.only(bottom: 15),
                     child: AnimatedBuilder(
-                      animation: loginControll,
+                      animation: _loginControll,
                       builder: (builderContext, childWidget) {
                         return Stack(
                           children: <Widget>[
@@ -187,50 +178,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   Widget buildLoginAnim(BuildContext context) {
-    return (pointAnimation == null ? 0 : pointAnimation.value) > 0
+    return (_pointAnimation == null ? 0 : _pointAnimation.value) > 0
         ? CustomPaint(
-            size: Size(52.0, pointOffY + 60.0),
+            size: Size(52.0, _pointOffY + 60.0),
             painter: WaterDroplets(
                 color: Theme.of(context).primaryColor,
                 bigRadius: 25.0,
                 smallRadius: 5.0,
-                bottomOffset: pointAnimation.value,
+                bottomOffset: _pointAnimation.value,
                 strokeWidth: 1.0,
                 showAuxiliaryPaint: false),
           )
         : _buildLogin(
             context,
-            widthAnimation == null ? double.infinity : widthAnimation.value,
-            transparentAnimation == null ? 1 : transparentAnimation.value);
+            _widthAnimation == null ? double.infinity : _widthAnimation.value,
+            _transparentAnimation == null ? 1 : _transparentAnimation.value);
   }
-
-//  Column buildLoginAnim(BuildContext context) {
-//    return Column(
-//      children: <Widget>[
-//        Center(
-//          child: _buildLogin(
-//              context,
-//              widthAnimation == null ? double.infinity : widthAnimation.value,
-//              transparentAnimation == null ? 1 : transparentAnimation.value),
-//        ),
-//        (pointAnimation == null ? 0 : pointAnimation.value) > 0
-//            ? Padding(
-//                padding: EdgeInsets.only(
-//                    top: (pointAnimation == null ? 0 : pointAnimation.value) -
-//                        ((pointZoomAnimation == null
-//                                ? 10
-//                                : pointZoomAnimation.value) /
-//                            2) +
-//                        5),
-//                child: _buildPoint(
-//                    pointZoomAnimation == null ? 10 : pointZoomAnimation.value),
-//              )
-//            : Padding(
-//                padding: EdgeInsets.zero,
-//              )
-//      ],
-//    );
-//  }
 
   SizedBox _buildLogin(
       BuildContext context, double loginWidth, double transparent) {
@@ -253,7 +216,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 50 -
                 55 -
                 max(0.0, MediaQuery.of(context).padding.bottom - 10.0));
-            loginControll.forward();
+            _loginControll.forward();
           },
           borderRadius: BorderRadius.all(Radius.circular(25)),
           child: Container(
