@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_demo/dj/djoa.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(new DJOA());
 
 class MyApp extends StatelessWidget {
 
