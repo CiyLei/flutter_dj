@@ -4,7 +4,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_app_demo/anim/water_droplets_anim2.dart';
 import 'package:flutter_app_demo/dj/section_widget.dart';
+import 'package:flutter_app_demo/dj/spring_curve.dart';
 import 'home.dart';
 import 'dart:ui' as ui show ImageFilter, Gradient, Image;
 
@@ -39,15 +41,17 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   Animation<double> widthAnimation;
   Animation<double> transparentAnimation;
   Animation<double> pointAnimation;
-  Animation<double> pointZoomAnimation;
+
+//  Animation<double> pointZoomAnimation;
   Home _home;
+  double pointOffY;
 
   @override
   void initState() {
     super.initState();
     _home = Home();
     loginControll =
-        AnimationController(vsync: this, duration: Duration(seconds: 2))
+        AnimationController(vsync: this, duration: Duration(seconds: 4))
           ..addStatusListener((AnimationStatus statu) {
             if (statu == AnimationStatus.completed) {
               openHomePage();
@@ -57,6 +61,13 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   openHomePage() async {
     Uint8List capturePng = await _capturePng();
+//    var testImage = NetworkImage("");
+//    testImage.obtainKey(ImageConfiguration()).then((val) {
+//      var load = testImage.load(val);
+//      load.addListener((listener, error) {
+//        listener.image
+//      });
+//    });
     Codec codec = await instantiateImageCodec(capturePng);
     FrameInfo frame = await codec.getNextFrame();
     Navigator.of(context).push(PageRouteBuilder(
@@ -65,19 +76,24 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           return AnimatedBuilder(
             animation: animation1,
             builder: (bulidContext, child) => Stack(
-              children: <Widget>[
-                _home,
-                SectionWidget(
-                  backgroupImage: frame.image,
-                  progress: animation1.value,
-                  color: Theme.of(context).primaryColor,
-                  // 55为发布按钮的中心位置
-                  bottomOffsetY: (55.0 + max(0.0, MediaQuery.of(context).padding.bottom - 10.0)),
-                )
-              ],
-            ),
+                  children: <Widget>[
+                    _home,
+                    SectionWidget(
+                      backgroupImage: frame.image,
+                      progress: animation1.value < 0.3
+                          ? 0.0
+                          : ((animation1.value - 0.3) / (1.0 - 0.3)),
+                      color: Theme.of(context).primaryColor,
+                      // 55为发布按钮的中心位置
+                      bottomOffsetY: (55.0 +
+                          max(0.0,
+                              MediaQuery.of(context).padding.bottom - 10.0)),
+                    )
+                  ],
+                ),
           );
         }));
+    await Future.delayed(const Duration(seconds: 1));
     loginControll.reset();
   }
 
@@ -98,24 +114,17 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   void initAnimation(double pointOffY) {
-    widthAnimation = Tween(
-            begin: window.physicalSize.width,
-            end: (50.0))
+    this.pointOffY = pointOffY;
+    widthAnimation = Tween(begin: window.physicalSize.width, end: (50.0))
         .animate(CurvedAnimation(
             parent: loginControll,
-            curve: Interval(0, 0.7, curve: ElasticOutCurve(1.8))));
+            curve: Interval(0, 0.3, curve: SpringCurve(tension: 0.7))));
     transparentAnimation = Tween(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(parent: loginControll, curve: Interval(0.2, 0.3)));
-    pointAnimation =
-        Tween(begin: 0.0, end: pointOffY).animate(
-            CurvedAnimation(
-                parent: loginControll,
-                curve: Interval(0.30, 0.85, curve: Curves.ease)));
-    pointZoomAnimation = Tween(
-            begin: (10.0),
-            end: (75.0))
-        .animate(
-            CurvedAnimation(parent: loginControll, curve: Interval(0.95, 1)));
+        CurvedAnimation(parent: loginControll, curve: Interval(0.1, 0.2)));
+    pointAnimation = Tween(begin: 0.0, end: pointOffY).animate(CurvedAnimation(
+        parent: loginControll, curve: Interval(0.30, 1.0, curve: Curves.ease)));
+//    pointZoomAnimation = Tween(begin: (10.0), end: (75.0)).animate(
+//        CurvedAnimation(parent: loginControll, curve: Interval(0.95, 1)));
   }
 
   @override
@@ -124,97 +133,51 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       data: Theme.of(context).copyWith(
           hintColor: Colors.white,
           inputDecorationTheme: InputDecorationTheme(
-            labelStyle: TextStyle(
-                color: Colors.white, fontSize: 12),
+            labelStyle: TextStyle(color: Colors.white, fontSize: 12),
             border: InputBorder.none,
           )),
       child: RepaintBoundary(
         key: _backKey,
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
-          body: SingleChildScrollView(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: 20,
-                    right: 20),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 80,
-                          bottom: 40),
-                      child: _buildLogo(),
+          body: Center(
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 80, bottom: 40),
+                    child: _buildLogo(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: _buildUserField(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 70),
+                    child: _buildPassField(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: AnimatedBuilder(
+                      animation: loginControll,
+                      builder: (builderContext, childWidget) {
+                        return Stack(
+                          children: <Widget>[
+                            Center(
+                              child: buildLoginAnim(context),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 15, right: 15, top: 65),
+                              child: _buildVerificationCodeForgetPassword(),
+                            )
+                          ],
+                        );
+                      },
                     ),
-                    Padding(
-                      padding:
-                      EdgeInsets.only(bottom: 15),
-                      child: _buildUserField(),
-                    ),
-                    Padding(
-                      padding:
-                      EdgeInsets.only(bottom: 70),
-                      child: _buildPassField(),
-                    ),
-                    Padding(
-                      padding:
-                      EdgeInsets.only(bottom: 15),
-                      child: AnimatedBuilder(
-                        animation: loginControll,
-                        builder: (builderContext, childWidget) {
-                          return Stack(
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Center(
-                                    child: _buildLogin(
-                                        context,
-                                        widthAnimation == null
-                                            ? double.infinity
-                                            : widthAnimation.value,
-                                        transparentAnimation == null
-                                            ? 1
-                                            : transparentAnimation.value),
-                                  ),
-                                  (pointAnimation == null
-                                      ? 0
-                                      : pointAnimation.value) >
-                                      0
-                                      ? Padding(
-                                    padding: EdgeInsets.only(
-                                        top: (pointAnimation == null
-                                            ? 0
-                                            : pointAnimation.value) -
-                                            ((pointZoomAnimation == null
-                                                ? 10
-                                                : pointZoomAnimation
-                                                .value) /
-                                                2) +
-                                            5),
-                                    child: _buildPoint(
-                                        pointZoomAnimation == null
-                                            ? 10
-                                            : pointZoomAnimation.value),
-                                  )
-                                      : Padding(
-                                    padding: EdgeInsets.zero,
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15,
-                                    right: 15,
-                                    top: 65),
-                                child: _buildVerificationCodeForgetPassword(),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -222,6 +185,52 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       ),
     );
   }
+
+  Widget buildLoginAnim(BuildContext context) {
+    return (pointAnimation == null ? 0 : pointAnimation.value) > 0
+        ? CustomPaint(
+            size: Size(52.0, pointOffY + 60.0),
+            painter: WaterDroplets(
+                color: Theme.of(context).primaryColor,
+                bigRadius: 25.0,
+                smallRadius: 5.0,
+                bottomOffset: pointAnimation.value,
+                strokeWidth: 1.0,
+                showAuxiliaryPaint: false),
+          )
+        : _buildLogin(
+            context,
+            widthAnimation == null ? double.infinity : widthAnimation.value,
+            transparentAnimation == null ? 1 : transparentAnimation.value);
+  }
+
+//  Column buildLoginAnim(BuildContext context) {
+//    return Column(
+//      children: <Widget>[
+//        Center(
+//          child: _buildLogin(
+//              context,
+//              widthAnimation == null ? double.infinity : widthAnimation.value,
+//              transparentAnimation == null ? 1 : transparentAnimation.value),
+//        ),
+//        (pointAnimation == null ? 0 : pointAnimation.value) > 0
+//            ? Padding(
+//                padding: EdgeInsets.only(
+//                    top: (pointAnimation == null ? 0 : pointAnimation.value) -
+//                        ((pointZoomAnimation == null
+//                                ? 10
+//                                : pointZoomAnimation.value) /
+//                            2) +
+//                        5),
+//                child: _buildPoint(
+//                    pointZoomAnimation == null ? 10 : pointZoomAnimation.value),
+//              )
+//            : Padding(
+//                padding: EdgeInsets.zero,
+//              )
+//      ],
+//    );
+//  }
 
   SizedBox _buildLogin(
       BuildContext context, double loginWidth, double transparent) {
@@ -233,18 +242,24 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         color: Theme.of(context).primaryColor,
         child: InkWell(
           onTap: () {
-            final y = _loginKey.currentContext.findRenderObject().getTransformTo(null).getTranslation().y;
+            final y = _loginKey.currentContext
+                .findRenderObject()
+                .getTransformTo(null)
+                .getTranslation()
+                .y;
             // 屏幕高度 - 登陆按钮的屏幕位置 - 登陆按钮的高度 - 扩展按钮的底部padding
-            initAnimation(MediaQuery.of(context).size.height - y - 50 - 55 - max(0.0, MediaQuery.of(context).padding.bottom - 10.0));
+            initAnimation(MediaQuery.of(context).size.height -
+                y -
+                50 -
+                55 -
+                max(0.0, MediaQuery.of(context).padding.bottom - 10.0));
             loginControll.forward();
           },
-          borderRadius:
-              BorderRadius.all(Radius.circular(25)),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
           child: Container(
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.all(
-                    Radius.circular(25))),
+                borderRadius: BorderRadius.all(Radius.circular(25))),
             child: Center(
               child: Opacity(
                 opacity: transparent,
@@ -280,16 +295,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         Expanded(
           child: Text(
             "验证码登录",
-            style: TextStyle(
-                color: Colors.white, fontSize: 12),
+            style: TextStyle(color: Colors.white, fontSize: 12),
           ),
         ),
         Expanded(
           child: Text(
             "忘记密码",
             textAlign: TextAlign.right,
-            style: TextStyle(
-                color: Colors.white, fontSize: 12),
+            style: TextStyle(color: Colors.white, fontSize: 12),
           ),
         ),
       ],
