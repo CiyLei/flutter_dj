@@ -48,6 +48,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+//  @override
+//  Widget build(BuildContext context) {
+//    return Stack(
+//      alignment: Alignment.bottomCenter,
+//      children: <Widget>[
+//        Scaffold(
+//          appBar: _buildAppBar(),
+//          bottomNavigationBar: _buildBottomAppBar(),
+//          body: Company(),
+//          floatingActionButton: FloatingActionButton(
+//            onPressed: () {},
+//            child: _buildExpansionButton(),
+//          ),
+//          floatingActionButtonLocation:
+//          FloatingActionButtonLocation.centerDocked,
+//        ),
+//      ],
+//    );
+//  }
+
   Widget _buildAppBar() {
     return AppBar(
       title: Text("东经科技"),
@@ -57,24 +77,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         _buildMessageBar(),
       ],
     );
-//    return Platform.isIOS
-//        ? CupertinoNavigationBar(
-//            middle: Text(
-//              "东经科技",
-//              style: TextStyle(color: Colors.white),
-//            ),
-//            leading: _bulidScannerBar(),
-//            trailing: _buildMessageBar(),
-//            backgroundColor: Theme.of(context).primaryColor,
-//          )
-//        : AppBar(
-//            title: Text("东经科技"),
-//            leading: Icon(Icons.apps),
-//            actions: <Widget>[
-//              _bulidScannerBar(),
-//              _buildMessageBar(),
-//            ],
-//          );
   }
 
   IconButton _bulidScannerBar() {
@@ -130,6 +132,81 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBottomAppBar() {
+    return BottomAppBar(
+      shape: CircularNotchedRectangle(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            width: 50.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.comment,
+                  color: Theme.of(context).primaryColor,
+                ),
+                Text("公司")
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            width: 50.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.work,
+                  color: Theme.of(context).primaryColor,
+                ),
+                Text("工作")
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            alignment: Alignment.bottomCenter,
+            width: 50.0,
+            height: 50.0,
+            child: Text("发布"),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            width: 50.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.book,
+                  color: Theme.of(context).primaryColor,
+                ),
+                Text("通讯录")
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+            width: 50.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.person,
+                  color: Theme.of(context).primaryColor,
+                ),
+                Text("我的")
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

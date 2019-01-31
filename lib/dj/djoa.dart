@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:math';
 
@@ -6,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_demo/anim/water_droplets_anim2.dart';
 import 'package:flutter_app_demo/dj/CircleClipper.dart';
-import 'package:flutter_app_demo/dj/section_widget.dart';
 import 'package:flutter_app_demo/dj/spring_curve.dart';
 import 'home.dart';
-import 'dart:ui' as ui show ImageFilter, Gradient, Image;
 
 void main() {
   runApp(DJOA());
