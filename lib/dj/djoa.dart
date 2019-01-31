@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app_demo/anim/water_droplets_anim2.dart';
+import 'package:flutter_app_demo/dj/CircleClipper.dart';
 import 'package:flutter_app_demo/dj/section_widget.dart';
 import 'package:flutter_app_demo/dj/spring_curve.dart';
 import 'home.dart';
@@ -59,51 +60,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   openHomePage() async {
-    Uint8List capturePng = await _capturePng();
-//    var testImage = NetworkImage("");
-//    testImage.obtainKey(ImageConfiguration()).then((val) {
-//      var load = testImage.load(val);
-//      load.addListener((listener, error) {
-//        listener.image
-//      });
-//    });
-    Codec codec = await instantiateImageCodec(capturePng);
-    FrameInfo frame = await codec.getNextFrame();
     Navigator.of(context).push(PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 2000),
         pageBuilder: (buildContext, animation1, animation2) {
           return AnimatedBuilder(
             animation: animation1,
-            builder: (bulidContext, child) => Stack(
-                  children: <Widget>[
-                    _home,
-                    SectionWidget(
-                      backgroupImage: frame.image,
-                      progress: animation1.value < 0.3
-                          ? 0.0
-                          : ((animation1.value - 0.3) / (1.0 - 0.3)),
-                      color: Theme.of(context).primaryColor,
-                      // 55为发布按钮的中心位置
-                      bottomOffsetY: (55.0 +
-                          max(0.0,
-                              MediaQuery.of(context).padding.bottom - 10.0)),
-                    )
-                  ],
+              builder: (bulidContext, child) => ClipOval(
+                clipper: CircleClipper(
+                  bottomOffsetY: (55.0 + max(0.0, MediaQuery.of(context).padding.bottom - 10.0)),
+                  progress: animation1.value < 0.3 ? 0.0 : ((animation1.value - 0.3) / (1.0 - 0.3)),
                 ),
+                child: _home,
+              ),
           );
         }));
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 2500));
     _loginControll.reset();
-  }
-
-  // 截图boundary，并且返回图片的二进制数据。
-  Future<Uint8List> _capturePng() async {
-    RenderRepaintBoundary boundary = _backKey.currentContext.findRenderObject();
-    ui.Image image = await boundary.toImage();
-    // 注意：png是压缩后格式，如果需要图片的原始像素数据，请使用rawRgba
-    ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-    Uint8List pngBytes = byteData.buffer.asUint8List();
-    return pngBytes;
   }
 
   void initAnimation(double pointOffY) {
