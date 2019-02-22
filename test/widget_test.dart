@@ -27,4 +27,31 @@ void main() {
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
+  C();
 }
+
+abstract class Base {
+  Base() {
+    p();
+  }
+
+  void p() {
+    print('Base');
+  }
+}
+
+mixin A on Base{
+  void p() {
+    super.p();
+    print('A');
+  }
+}
+
+mixin B on Base{
+  void p() {
+    super.p();
+    print('B');
+  }
+}
+
+class C extends Base with A, B {}
